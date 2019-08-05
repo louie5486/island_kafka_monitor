@@ -22,6 +22,7 @@ services:
       - kafka-jmx-exporter
 
   grafana:
+    user: root
     image: grafana/grafana:5.2.2
     ports:
       - 3000:3000/tcp
