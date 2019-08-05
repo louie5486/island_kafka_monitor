@@ -1,0 +1,34 @@
+version: "3.2"
+services:
+  kafka-jmx-exporter:
+    build: ./prometheus-jmx-exporter
+    ports:
+      - "8080:8080"
+    environment:
+      - JMX_PORT=9998
+      - JMX_HOST=192.168.56.21
+      - HTTP_PORT=8080
+      - JMX_EXPORTER_CONFIG_FILE=kafka.yml
+
+  prometheus:
+    user: root
+    ports:
+      - 9090:9090/tcp
+    image: prom/prometheus:latest
+    volumes:
+      - ./mount/prometheus/:/etc/prometheus/
+      - prometheus-data2:/prometheus
+    links:
+      - kafka-jmx-exporter
+
+  grafana:
+    image: grafana/grafana:5.2.2
+    ports:
+      - 3000:3000/tcp
+    links:
+      - prometheus
+    volumes:
+      - "./mount/grafana-db:/var/lib/grafana"
+
+volumes:
+ prometheus-data2: {}
